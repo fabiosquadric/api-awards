@@ -1,4 +1,4 @@
-# Golden Raspberry Awards API
+# Awards API
 
 Esta é uma API RESTful desenvolvida em Java com Spring Boot que fornece dados sobre os indicados e vencedores da categoria "Pior Filme" do Golden Raspberry Awards.
 
