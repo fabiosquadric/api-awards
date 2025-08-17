@@ -97,11 +97,11 @@ mvnw.cmd test
 ```
 
 Caso não tenha maven, é possível rodar os testes diretamente em uma IDE como o Intellij IDEA, onde o projeto foi desenvolvido.
-Basta abrir o projeto, procurar a pasta 
+Basta abrir o projeto, procurar a pasta: 
 ```
 src/main/java/com/awards/integration
 ```
-Clicar com o botão direito e escolher a opção 
+Clicar com o botão direito sobre a pasta e escolher a opção: 
 ```
 Run 'Tests In Integration'
 ```
