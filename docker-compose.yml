@@ -1,0 +1,8 @@
+services:
+  awards-api:
+    build: .
+    image: awards-api:latest
+    container_name: awards-api-container
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
