@@ -19,7 +19,7 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("/awards")
-@Tag(name = "Awards Analysis", description = "Endpoints para análise de dados dos prêmios")
+@Tag(name = "Awards", description = "Endpoints para análise de dados dos prêmios")
 public class AwardsController {
 
     private final AwardsService awardsService;
@@ -40,7 +40,7 @@ public class AwardsController {
     }
 
     @Operation(summary = "Upload de novo arquivo de filmes",
-            description = "Envia um novo arquivo CSV para ser processado e adicionado à base de dados. O arquivo substituirá os dados existentes.")
+            description = "Envia um novo arquivo CSV para ser processado e adicionado à base de dados.")
     @ApiResponse(responseCode = "200", description = "Arquivo processado com sucesso.")
     @ApiResponse(responseCode = "400", description = "Arquivo vazio, com formato inválido ou com dados mal formatados.")
     @ApiResponse(responseCode = "415", description = "Tipo de arquivo não suportado. Apenas text/csv é aceito.")

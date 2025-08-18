@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/movies")
-@Tag(name = "Movie Management", description = "Endpoints para o gerenciamento completo de filmes (CRUD)")
+@Tag(name = "Movies", description = "Endpoints para o gerenciamento completo de filmes (CRUD)")
 public class MovieController {
 
     private final MovieService movieService;
@@ -30,8 +31,10 @@ public class MovieController {
 
     @Operation(summary = "Listar todos os filmes", description = "Retorna uma lista paginada de todos os filmes na base de dados.")
     @GetMapping
-    public ResponseEntity<Page<Movie>> getAllMovies(@Parameter(description = "Configuração de paginação (page, size, sort)") Pageable pageable) {
-        return ResponseEntity.ok(movieService.findAllMovies(pageable));
+    public ResponseEntity<Page<Movie>> getAllMovies(@RequestParam(defaultValue="0") int pageNumber,
+                                                    @RequestParam(defaultValue="20") int size) {
+
+        return ResponseEntity.ok(movieService.findAllMovies(PageRequest.of(pageNumber,size)));
     }
 
     @Operation(summary = "Buscar filme por ID", description = "Retorna os detalhes de um filme específico pelo seu ID.")
@@ -68,14 +71,12 @@ public class MovieController {
                     movie.setTitle(movieDetails.getTitle());
                     movie.setStudios(movieDetails.getStudios());
                     movie.setProducers(movieDetails.getProducers());
-                    movie.setReleaseYear(movieDetails.getReleaseYear());
-                    movie.setWinner(movieDetails.isWinner());
+                    movie.setYear(movieDetails.getYear());
+                    movie.setWinner(movieDetails.getWinner());
                     return ResponseEntity.ok(movieService.saveMovie(movie));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
-
-    // Anotações para PATCH e DELETE seriam similares...
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Deletar um filme", description = "Remove um filme da base de dados pelo seu ID.")

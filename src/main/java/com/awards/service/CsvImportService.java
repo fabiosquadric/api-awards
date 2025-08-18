@@ -41,32 +41,17 @@ public class CsvImportService {
     @Transactional(rollbackFor = Exception.class)
     public int importMoviesFromCsv(InputStream inputStream) throws IOException, CsvValidationException, InterruptedException {
         long startTime = System.currentTimeMillis();
-        List<Movie> moviesToSave = new ArrayList<>();
 
-        try (CSVReader reader = new CSVReader(new InputStreamReader(inputStream))) {
-            reader.readNext(); // Pula o cabeçalho
+        List<Movie> moviesToSave = readMovies(inputStream);
 
-            String[] line;
-            while ((line = reader.readNext()) != null) {
-                String[] values = line[0].split(";", -1); // -1 para incluir colunas vazias no final
+        saveMovies(moviesToSave);
 
-                if (values.length >= 4) {
-                    Movie movie = Movie.builder()
-                            .releaseYear(Integer.parseInt(values[0].trim()))
-                            .title(values[1].trim())
-                            .studios(values[2].trim())
-                            .producers(values[3].trim())
-                            .winner(values.length > 4 && "yes".equalsIgnoreCase(values[4].trim()))
-                            .build();
-                    moviesToSave.add(movie);
-                }
-            }
-        }
+        long endTime = System.currentTimeMillis();
+        log.info("Finished processing {} records from CSV in {} ms", moviesToSave.size(), (endTime - startTime));
+        return moviesToSave.size();
+    }
 
-        // Usar saveAll é mais performático para inserções em lote do que saves individuais em um loop.
-        // A paralelização aqui é mais útil para processamentos pesados por linha (ex: chamadas externas),
-        // para simples inserções, o batch do JPA já é muito eficiente.
-        // Mantendo a paralelização para seguir o requisito original.
+    private void saveMovies(List<Movie> moviesToSave) throws InterruptedException {
         int numThreads = Runtime.getRuntime().availableProcessors();
         ExecutorService executor = Executors.newFixedThreadPool(numThreads);
 
@@ -79,9 +64,30 @@ public class CsvImportService {
             log.error("CSV data processing timed out.");
             executor.shutdownNow();
         }
+    }
 
-        long endTime = System.currentTimeMillis();
-        log.info("Finished processing {} records from CSV in {} ms", moviesToSave.size(), (endTime - startTime));
-        return moviesToSave.size();
+    private static List<Movie> readMovies(InputStream inputStream) throws IOException, CsvValidationException {
+        List<Movie> moviesToSave = new ArrayList<>();
+
+        try (CSVReader reader = new CSVReader(new InputStreamReader(inputStream))) {
+            reader.readNext(); // Pula o cabeçalho
+
+            String[] line;
+            while ((line = reader.readNext()) != null) {
+                String[] values = line[0].split(";", -1); // -1 para incluir colunas vazias no final
+
+                if (values.length >= 4) {
+                    Movie movie = Movie.builder()
+                            .year(Integer.parseInt(values[0].trim()))
+                            .title(values[1].trim())
+                            .studios(values[2].trim())
+                            .producers(values[3].trim())
+                            .winner(values.length > 4 && "yes".equalsIgnoreCase(values[4].trim()))
+                            .build();
+                    moviesToSave.add(movie);
+                }
+            }
+        }
+        return moviesToSave;
     }
 }

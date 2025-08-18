@@ -19,7 +19,7 @@ public class AwardsService {
     }
 
     public AwardIntervalResponse getProducersAwardIntervals() {
-        List<Movie> winners = movieRepository.findByWinnerTrueOrderByReleaseYearAsc();
+        List<Movie> winners = movieRepository.findByWinnerTrueOrderByYearAsc();
         Map<String, List<Integer>> producerWins = new HashMap<>();
 
         // 1. Mapeia cada produtor a uma lista de anos em que venceu
@@ -28,7 +28,7 @@ public class AwardsService {
             for (String producerName : producers) {
                 String trimmedName = producerName.trim();
                 if (!trimmedName.isEmpty()) {
-                    producerWins.computeIfAbsent(trimmedName, k -> new ArrayList<>()).add(winner.getReleaseYear());
+                    producerWins.computeIfAbsent(trimmedName, k -> new ArrayList<>()).add(winner.getYear());
                 }
             }
         }
@@ -38,7 +38,7 @@ public class AwardsService {
         // 2. Calcula os intervalos para produtores com mais de um prêmio
         for (Map.Entry<String, List<Integer>> entry : producerWins.entrySet()) {
             String producer = entry.getKey();
-            List<Integer> years = entry.getValue().stream().sorted().collect(Collectors.toList());
+            List<Integer> years = entry.getValue().stream().sorted().toList();
 
             if (years.size() > 1) {
                 for (int i = 0; i < years.size() - 1; i++) {

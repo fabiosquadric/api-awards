@@ -1,9 +1,8 @@
 package com.awards.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,10 +18,23 @@ public class Movie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer releaseYear; // Renomeado para evitar conflito com palavra reservada 'year'
+    @NotNull
+    @Column(name = "releaseYear", nullable = false)
+    private Integer year;
+
+    @NotBlank
+    @Column(name = "title", nullable = false)
     private String title;
+
+    @NotBlank
+    @Column(name = "studios", nullable = false)
     private String studios;
+
+    @NotBlank
+    @Column(name = "producers", nullable = false, columnDefinition = "TEXT")
     private String producers;
-    private boolean winner;
+
+    @Column(name = "winner")
+    private Boolean winner;
 
 }

@@ -39,7 +39,7 @@ public class MovieControllerIntegrationTest {
     @Test
     void crudOperations_shouldWorkCorrectly() throws Exception {
         // 1. Create
-        Movie newMovie = Movie.builder().title("Test Movie").producers("Test Producer").releaseYear(2025).studios("Test Studio").winner(true).build();
+        Movie newMovie = Movie.builder().title("Test Movie").producers("Test Producer").year(2025).studios("Test Studio").winner(true).build();
         String movieJson = objectMapper.writeValueAsString(newMovie);
 
         String location = mockMvc.perform(post("/movies")
